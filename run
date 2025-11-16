@@ -1,0 +1,127 @@
+#!/bin/bash
+
+set -o errexit
+set -o pipefail
+
+source .env
+
+function ps {
+    docker compose ps
+}
+
+function up {
+    docker compose up -d "$@"
+
+    docker compose exec php sh -c "
+        mkdir -p storage/framework/{cache,views,sessions,testing} bootstrap/cache && \
+        chown -R www-data:www-data storage bootstrap/cache && \
+        chmod -R 775 storage bootstrap/cache
+        "
+
+    docker compose exec php php artisan key:generate
+}
+
+
+function down {
+    docker compose down "${@}"
+}
+
+function permissions {
+    sudo chown -R www-data:www-data storage ../bootstrap/cache
+    sudo chmod -R 775 storage ../bootstrap/cache
+}
+
+function composer {
+    docker run --rm -i \
+        -e COMPOSER_CACHE_DIR="/app/.cache/composer" \
+        -u 0:0 \
+        -v "$(pwd):/app" \
+        -w /app \
+        composer:2.7.2 composer "${@}"
+}
+
+
+function nginx:check {
+    docker compose exec web nginx -t
+}
+
+function nginx:status {
+    docker compose exec web service nginx status
+}
+
+function nginx:reload {
+    docker compose exec web nginx -s reload
+}
+
+function php:console {
+    docker compose exec php php -a
+}
+
+function tests {
+    # sempre rodar apenas Unit e Feature
+    TEST_PATH="tests/Unit tests/Feature"
+
+    echo "Installing JS dependencies..."
+    docker compose exec php_test yarn install -y
+
+    echo "Skipping front-end build (testing environment)..."
+
+    echo "Running migrations..."
+    docker compose exec -T php_test php artisan migrate --force --env=testing
+
+    echo "Running tests..."
+    docker compose run --rm php_test ./vendor/bin/phpunit --colors=always ${TEST_PATH}
+}
+
+function dusk {
+    docker compose exec php php artisan dusk --env=dusk.local
+}
+
+function uploads {
+    echo "Criando link simbólico storage e ajustando permissões..."
+
+    docker compose exec php sh -c "
+        cd /var/www/public && \
+        if [ -L storage ]; then rm storage; fi && \
+        ln -s ../storage/app/public storage && \
+        mkdir -p ../storage/app/public/covers && \
+        chown -R www-data:www-data ../storage ../bootstrap/cache && \
+        chmod -R 775 ../storage ../bootstrap/cache
+    "
+
+    echo "Link simbólico criado e permissões ajustadas."
+}
+
+function phpcs {
+    TEST_PATH="${@:-.}"
+    docker compose run --rm php ./vendor/bin/phpcs -d memory_limit=1G ${TEST_PATH}
+}
+
+function phpcbf {
+    TEST_PATH="${@:-.}"
+     docker compose run --rm php ./vendor/bin/phpcbf -d memory_limit=1G ${TEST_PATH}
+}
+
+function phpstan {
+    TEST_PATH="${@:-}"
+    docker compose run --rm php ./vendor/bin/phpstan analyse --memory-limit 1G ${TEST_PATH}
+}
+
+function git:clean:branchs {
+    git branch | grep -v '\*\|master\|main\|develop\|production' | xargs -n 1 git branch -D
+}
+
+function db:console {
+    docker compose exec db psql -U ${DB_USERNAME} -d ${DB_DATABASE}
+}
+
+function db:reset {
+    docker compose exec php php artisan migrate:fresh --seed
+}
+
+function db:populate {
+    docker compose exec php php artisan db:seed
+}
+
+TIMEFORMAT=$'\nTask completed in %3lR'
+time ${@}
