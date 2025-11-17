@@ -6,7 +6,7 @@
     $title = $title ?? ($statusTexts[$code] ?? 'Erro inesperado');
 @endphp
 
-@section('title', "Erro {$code} - GenBook")
+@section('title', "Erro {$code} - LegoTech")
 
 @section('content')
 <div class="min-h-screen flex flex-col items-center justify-center bg-gray-100 text-center px-4">
