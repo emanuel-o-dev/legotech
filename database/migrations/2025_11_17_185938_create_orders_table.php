@@ -11,15 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('authors', function (Blueprint $table) {
+        Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->string('full_name');
-            $table->text('bio')->nullable();
-            $table->string('nationality', 100)->nullable();
-            $table->date('birth_date')->nullable();
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
-         });
+        });
     }
 
     /**
@@ -27,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('authors');
+        Schema::dropIfExists('orders');
     }
 };
