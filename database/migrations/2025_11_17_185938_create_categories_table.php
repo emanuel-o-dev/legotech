@@ -11,14 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-         Schema::create('penalties', function (Blueprint $table) {
+        Schema::create('categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->text('description')->nullable();
-            $table->boolean('active')->default(true);
-            $table->boolean('is_active')->default(true);
             $table->timestamps();
-         });
+        });
     }
 
     /**
@@ -26,6 +22,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('penalties');
+        Schema::dropIfExists('categories');
     }
 };
