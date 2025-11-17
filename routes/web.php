@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -13,7 +14,13 @@ use Illuminate\Support\Facades\Route;
 | Rotas Públicas
 |--------------------------------------------------------------------------
 */
-Route::get('/')->redirect()->route('products.index');
+Route::get('/', function () {
+    if (Auth::check()) {
+        return redirect()->route('products.index');
+    }
+    return view('products.index');
+});
+
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{product}', [ProductController::class, 'show'])->name('products.show');
@@ -45,3 +52,21 @@ Route::middleware(['auth', 'can:isAdmin'])
         Route::get('orders', [AdminOrderController::class, 'index'])->name('orders.index');
         Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     });
+
+// Fallback dinâmico
+Route::fallback(function () {
+    if (Auth::check()) {
+        // Usuário logado: exibe 404 interna ou redireciona pro dashboard
+        return response()->view('errors.authenticated', [
+            'code' => 404,
+            'message' => 'Página não encontrada dentro do sistema.'
+        ], 404);
+        // ou: return redirect()->route('dashboard');
+    }
+
+    // Usuário não autenticado: exibe 404 pública
+    return response()->view('errors.generic', [
+        'code' => 404,
+        'message' => 'A página que você procura não existe.'
+    ], 404);
+});
