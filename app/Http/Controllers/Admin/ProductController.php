@@ -3,63 +3,107 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Product;
+use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $products = Product::with('category')->orderBy('id', 'desc')->get();
+        return view('admin.products.index', compact('products'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $categories = Category::orderBy('name')->get();
+        return view('admin.products.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name'        => 'required',
+            'description' => 'nullable|string',
+            'price'       => 'required|numeric',
+            'category_id' => 'required|exists:categories,id',
+            'specs'       => 'nullable|string', // JSON
+            'image'       => 'nullable|image|max:2048'
+        ]);
+
+        $data = $request->only(['name','description','price','category_id']);
+
+        // Upload da imagem
+        if ($request->hasFile('image')) {
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
+
+        // Specs JSON
+        if ($request->specs) {
+            $data['specs'] = json_decode($request->specs, true);
+        }
+
+        Product::create($data);
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Produto criado com sucesso!');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function edit(Product $product)
     {
-        //
+        $categories = Category::orderBy('name')->get();
+        return view('admin.products.edit', compact('product', 'categories'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, Product $product)
     {
-        //
+        $request->validate([
+            'name'        => 'required',
+            'description' => 'nullable|string',
+            'price'       => 'required|numeric',
+            'category_id' => 'required|exists:categories,id',
+            'specs'       => 'nullable|string',
+            'image'       => 'nullable|image|max:2048'
+        ]);
+
+        $data = $request->only(['name','description','price','category_id']);
+
+        // Upload de nova imagem (se houver)
+        if ($request->hasFile('image')) {
+            // remove imagem antiga
+            if ($product->image_path) {
+                Storage::disk('public')->delete($product->image_path);
+            }
+
+            $data['image_path'] = $request->file('image')->store('products', 'public');
+        }
+
+        // Specs
+        if ($request->specs) {
+            $data['specs'] = json_decode($request->specs, true);
+        }
+
+        $product->update($data);
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Produto atualizado com sucesso!');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(Product $product)
     {
-        //
-    }
+        // remove imagem
+        if ($product->image_path) {
+            Storage::disk('public')->delete($product->image_path);
+        }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $product->delete();
+
+        return redirect()
+            ->route('admin.products.index')
+            ->with('success', 'Produto removido com sucesso!');
     }
 }
