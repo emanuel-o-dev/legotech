@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('email')->unique();
             $table->string('full_name');
+            $table->string('password');
+            $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_active')->default(true);
             // role ADMIN, USER
             $table->string('role')->default('USER')->after('password');

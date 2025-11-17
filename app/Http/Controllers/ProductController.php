@@ -7,7 +7,7 @@ use App\Models\Product;
 
 class ProductController extends Controller
 {
-   public function index()
+    public function index()
     {
         $categories = Category::orderBy('name')->get();
         $products = Product::orderBy('id', 'desc')->paginate(12);
