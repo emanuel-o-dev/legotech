@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('full_name');
             $table->boolean('is_active')->default(true);
             // role ADMIN, USER
-            $table->string('role')->default('USER');
+            $table->string('role')->default('USER')->after('password');
             $table->timestamps();
          });
     }
