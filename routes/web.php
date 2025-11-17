@@ -15,10 +15,7 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    if (Auth::check()) {
-        return redirect()->route('products.index');
-    }
-    return view('products.index');
+    return redirect()->route('products.index');
 });
 
 
