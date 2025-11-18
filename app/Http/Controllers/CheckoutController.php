@@ -48,6 +48,7 @@ class CheckoutController extends Controller
 
         session()->forget('cart');
 
-        return view('checkout.success', compact('order'));
+        return back()->with('success', 'Produto adicionado ao carrinho!');
+
     }
 }

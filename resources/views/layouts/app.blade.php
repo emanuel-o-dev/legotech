@@ -30,6 +30,11 @@
                 <a href="{{ route('cart.index') }}" class="relative text-xl hover:opacity-70">
                     🛒
                 </a>
+                @if (auth()->check())
+                {{-- orders --}}
+                <a href="{{ route('user.orders') }}" class="font-semibold hover:opacity-70">Meus Pedidos</a>
+                @endif
+
 
                 <!-- Login / Dashboard -->
                 @if (auth()->check())

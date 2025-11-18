@@ -19,13 +19,13 @@
         <div class="mb-4">
             <label class="block text-yellow-400 mb-1">Email</label>
             <input type="email" name="email" value="{{ old('email') }}"
-                   class="w-full px-3 py-2 rounded text-white" required />
+                   class="w-full px-3 py-2 rounded text-white border border-yellow-400" required />
         </div>
 
         <div class="mb-6">
             <label class="block text-yellow-400 mb-1">Senha</label>
             <input type="password" name="password"
-                   class="w-full px-3 py-2 rounded text-white" required />
+                   class="w-full px-3 py-2 rounded text-white border border-yellow-400" required />
         </div>
 
         <button class="bg-yellow-400 text-black font-bold w-full py-3 rounded hover:bg-yellow-300">

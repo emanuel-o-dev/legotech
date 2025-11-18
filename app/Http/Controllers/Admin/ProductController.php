@@ -19,7 +19,7 @@ class ProductController extends Controller
     public function create()
     {
         $categories = Category::orderBy('name')->get();
-        return view('admin.products.create', compact('categories'));
+        return view('admin.products.create', compact('categories'))->with('success', 'Produto criado com sucesso!');
     }
 
     public function store(Request $request)
