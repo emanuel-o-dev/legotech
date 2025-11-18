@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserOrderController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
@@ -26,13 +27,25 @@ Route::get('/products/{product}', [ProductController::class, 'show'])->name('pro
 // Carrinho
 Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
 Route::post('/cart/add/{product}', [CartController::class, 'add'])->name('cart.add');
-Route::post('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
+Route::delete('/cart/remove/{product}', [CartController::class, 'remove'])->name('cart.remove');
 Route::post('/cart/decrease/{product}', [CartController::class, 'decrease'])->name('cart.decrease');
 
 // Checkout
 Route::get('/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout.index');
 Route::post('/checkout/finish', [CheckoutController::class, 'finish'])->middleware('auth')->name('checkout.finish');
 
+
+/*|--------------------------------------------------------------------------
+| Rotas Usuário Autenticado
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth'])
+    ->get('/me/orders', [UserOrderController::class, 'index'])
+    ->name('user.orders');
+Route::middleware(['auth'])
+    ->get('/me/orders/{order}', [UserOrderController::class, 'show'])
+    ->name('user.orders.show');
 
 /*
 |--------------------------------------------------------------------------
