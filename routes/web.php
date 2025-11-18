@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
+use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
@@ -31,6 +32,20 @@ Route::post('/cart/decrease/{product}', [CartController::class, 'decrease'])->na
 // Checkout
 Route::get('/checkout', [CheckoutController::class, 'index'])->middleware('auth')->name('checkout.index');
 Route::post('/checkout/finish', [CheckoutController::class, 'finish'])->middleware('auth')->name('checkout.finish');
+
+
+/*
+|--------------------------------------------------------------------------
+| Login e Logout
+|--------------------------------------------------------------------------
+*/
+
+// Login
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.perform');
+
+// Logout
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
 
 /*
