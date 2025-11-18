@@ -43,6 +43,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/')->with('success', 'Você saiu da conta.');
+        return redirect('/products')->with('error', 'Você saiu da conta.');
     }
 }

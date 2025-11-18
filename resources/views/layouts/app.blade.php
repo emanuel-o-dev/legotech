@@ -30,6 +30,11 @@
                 <a href="{{ route('cart.index') }}" class="relative text-xl hover:opacity-70">
                     🛒
                 </a>
+                @if (auth()->check())
+                {{-- orders --}}
+                <a href="{{ route('user.orders') }}" class="font-semibold hover:opacity-70">Meus Pedidos</a>
+                @endif
+
 
                 <!-- Login / Dashboard -->
                 @if (auth()->check())
@@ -56,6 +61,23 @@
             © {{ date('Y') }} LegoTech • Todos os direitos reservados • Desenvolvido por Emanuel
         </div>
     </footer>
+
+    <!-- TOAST MESSAGES -->
+    @if (session('success'))
+        <div class="toast toast-top toast-end z-50">
+            <div class="alert alert-success">
+                <span>{{ session('success') }}</span>
+            </div>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="toast toast-top toast-end z-50">
+            <div class="alert alert-error">
+                <span>{{ session('error') }}</span>
+            </div>
+        </div>
+    @endif
 
 </body>
 

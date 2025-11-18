@@ -44,7 +44,7 @@ class CartController extends Controller
             session()->put('cart', $cart);
         }
 
-        return back()->with('success', 'Item removido.');
+        return back()->with('error', 'Item removido.');
     }
 
     public function decrease(Product $product)
@@ -52,17 +52,19 @@ class CartController extends Controller
         $cart = session()->get('cart', []);
 
         if (!isset($cart[$product->id])) {
-            return back();
+            return back()->with('error', 'Item não encontrado no carrinho.');
         }
 
         if ($cart[$product->id]['quantity'] > 1) {
             $cart[$product->id]['quantity']--;
+            return back()->with('error', 'Item removido.');
         } else {
             unset($cart[$product->id]);
+            return back()->with('error', 'Item removido.');
         }
 
         session()->put('cart', $cart);
 
-        return back();
+        return back()->with('error', 'Quantidade atualizada.');
     }
 }
