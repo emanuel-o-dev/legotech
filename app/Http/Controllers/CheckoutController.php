@@ -49,6 +49,5 @@ class CheckoutController extends Controller
         session()->forget('cart');
 
         return back()->with('success', 'Produto adicionado ao carrinho!');
-
     }
 }

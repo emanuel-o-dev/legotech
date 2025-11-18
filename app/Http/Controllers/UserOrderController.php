@@ -9,7 +9,7 @@ class UserOrderController extends Controller
     public function index()
     {
         $orders = Order::where('user_id', auth()->id())
-                        ->orderBy('id','desc')
+                        ->orderBy('id', 'desc')
                         ->paginate(10);
 
         return view('user.orders.index', compact('orders'));
