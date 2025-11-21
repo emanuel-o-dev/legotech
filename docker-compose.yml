@@ -47,7 +47,6 @@ services:
       - 5900:5900
     networks:
       - app-network
-
   php_test:
     build:
       context: .
@@ -62,6 +61,7 @@ services:
       - selenium
     environment:
       APP_ENV: testing
+      DB_CONNECTION: pgsql
       DB_HOST: db
       DB_PORT: 5432
       DB_DATABASE: legotech_test
