@@ -4,12 +4,12 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use PHPUnit\Event\Facade;
 use Tests\TestCase;
 
 class CheckoutControllerTest extends TestCase
 {
     use RefreshDatabase;
+
 
     protected function setUp(): void
     {
@@ -18,8 +18,12 @@ class CheckoutControllerTest extends TestCase
         $this->actingAs($user);
     }
 
-    /** @test */
-    public function it_redirects_if_cart_is_empty()
+    /**
+     * Returns if cart is empty.
+     *
+     * @return void
+     */
+    public function test_it_redirects_if_cart_is_empty(): void
     {
         $response = $this->get('/checkout');
 
@@ -27,8 +31,12 @@ class CheckoutControllerTest extends TestCase
         $response->assertSessionHas('error', 'Seu carrinho está vazio.');
     }
 
-    /** @test */
-    public function it_shows_checkout_page_with_items()
+    /**
+     * Shows checkout page with items.
+     *
+     * @return void
+     */
+    public function test_it_shows_checkout_page_with_items(): void
     {
         $this->withSession([
             'cart' => [

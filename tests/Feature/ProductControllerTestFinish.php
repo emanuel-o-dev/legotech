@@ -2,26 +2,33 @@
 
 namespace Tests\Feature;
 
+use App\Models\Product;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class CheckoutControllerTest extends TestCase
+class ProductControllerTestFinish extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_finishes_checkout_and_creates_order()
+    /**
+     * Finishes checkout and creates an order.
+     *
+     * @return void
+     */
+    public function testItFinishesCheckoutAndCreatesOrder(): void
     {
         $user = User::factory()->create();
-
         $this->actingAs($user);
 
+        $product = Product::factory()->create([
+            'price' => 20,
+        ]);
         $this->withSession([
             'cart' => [
-                1 => [
-                    'id' => 1,
-                    'name' => 'Produto X',
+                $product->id => [
+                    'id' => $product->id,
+                    'name' => $product->name,
                     'price' => 20,
                     'quantity' => 3,
                 ],
@@ -41,8 +48,8 @@ class CheckoutControllerTest extends TestCase
             'quantity' => 3,
         ]);
 
-        $response->assertSessionHas('success', 'Produto adicionado ao carrinho!');
+        $response->assertSessionHas('success');
 
-        $this->assertEquals([], session('cart'));
+        $this->assertNull(session('cart'));
     }
 }

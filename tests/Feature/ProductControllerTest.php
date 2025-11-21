@@ -11,8 +11,7 @@ class ProductControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function it_lists_products()
+    public function test_it_lists_products(): void
     {
         $category = Category::factory()->create();
         $products = Product::factory()->count(3)->create([
@@ -27,8 +26,7 @@ class ProductControllerTest extends TestCase
         $response->assertSee($products[2]->name);
     }
 
-    /** @test */
-    public function it_filters_products_by_category()
+    public function test_it_filters_products_by_category(): void
     {
         $cat1 = Category::factory()->create();
         $cat2 = Category::factory()->create();
@@ -43,8 +41,7 @@ class ProductControllerTest extends TestCase
         $response->assertDontSee($p2->name);
     }
 
-    /** @test */
-    public function it_shows_a_single_product()
+    public function test_it_shows_a_single_product(): void
     {
         $product = Product::factory()->create();
 
