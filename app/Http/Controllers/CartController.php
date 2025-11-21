@@ -57,9 +57,12 @@ class CartController extends Controller
 
         if ($cart[$product->id]['quantity'] > 1) {
             $cart[$product->id]['quantity']--;
-            return back()->with('error', 'Item removido.');
+            session()->put('cart', $cart);
+
+            return back()->with('error', 'Item diminuído.');
         } else {
             unset($cart[$product->id]);
+            session()->put('cart', $cart);
             return back()->with('error', 'Item removido.');
         }
 

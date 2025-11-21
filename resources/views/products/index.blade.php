@@ -3,42 +3,50 @@
 @section('title', 'Produtos')
 
 @section('content')
-<div class="max-w-7xl mx-auto mt-10">
+    <div class="mx-auto mt-10 max-w-6xl">
 
-    <h1 class="text-3xl font-bold text-yellow-400 mb-6">Produtos LEGO</h1>
+        <h1 class="mb-6 text-3xl font-bold text-yellow-400">Produtos</h1>
 
-    {{-- Lista de produtos --}}
-    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6">
+        {{-- FILTRO DE CATEGORIAS --}}
+        <div class="mb-6 flex flex-wrap gap-2">
 
-        @foreach($products as $product)
-            <div class="bg-[#0b1d3a] rounded-lg p-4 shadow-lg">
+            {{-- Botão "Todos" --}}
+            <a href="{{ route('products.index') }}" class="btn {{ !$selectedCategory ? 'btn-warning' : 'btn-outline' }}">
+                Todos
+            </a>
 
-                <a href="{{ route('products.show', $product) }}">
-                    <img src="{{ asset('storage/' . $product->image_path) }}" 
-                         class="w-full h-52 object-cover rounded shadow-md mb-3">
+            @foreach ($categories as $category)
+                <a href="{{ route('products.index', ['category' => $category->id]) }}"
+                    class="btn {{ $selectedCategory == $category->id ? 'btn-warning' : 'btn-outline' }}">
+                    {{ $category->name }}
                 </a>
+            @endforeach
 
-                <h2 class="text-lg font-bold text-yellow-400">
-                    {{ $product->name }}
-                </h2>
+        </div>
 
-                <p class="text-white opacity-80 mt-1">
-                    R$ {{ number_format($product->price, 2, ',', '.') }}
-                </p>
+        {{-- LISTA DE PRODUTOS --}}
+        <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3">
 
+            @forelse($products as $product)
                 <a href="{{ route('products.show', $product) }}"
-                    class="mt-4 block bg-yellow-400 text-black text-center font-bold px-3 py-2 rounded hover:bg-yellow-300">
-                    Ver Detalhes
+                    class="rounded-lg bg-[#0b1d3a] p-4 shadow duration-200 hover:scale-[1.02]">
+
+                    <img src="{{ asset('storage/' . $product->image_path) }}"
+                        class="mb-3 h-40 w-full rounded-lg object-cover">
+
+                    <h3 class="text-lg font-bold text-white">{{ $product->name }}</h3>
+                    <p class="text-xl font-bold text-yellow-400">
+                        R$ {{ number_format($product->price, 2, ',', '.') }}
+                    </p>
                 </a>
+            @empty
+                <p class="text-white opacity-90">Nenhum produto encontrado nessa categoria.</p>
+            @endforelse
+        </div>
 
-            </div>
-        @endforeach
+        <div class="mt-6">
+            {{ $products->links() }}
+        </div>
 
     </div>
-
-    <div class="mt-8">
-        {{ $products->links() }}
-    </div>
-
-</div>
 @endsection

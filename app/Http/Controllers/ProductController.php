@@ -9,11 +9,20 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $categories = Category::orderBy('name')->get();
-        $products = Product::orderBy('id', 'desc')->paginate(12);
+        $selectedCategory = request('category');
 
-        return view('products.index', compact('categories', 'products'));
+        $categories = Category::orderBy('name')->get();
+
+        $products = Product::query()
+            ->when($selectedCategory, function ($query) use ($selectedCategory) {
+                $query->where('category_id', $selectedCategory);
+            })
+            ->orderBy('id', 'desc')
+            ->paginate(12)
+            ->withQueryString();
+        return view('products.index', compact('products', 'categories', 'selectedCategory'));
     }
+
 
     public function show(Product $product)
     {
