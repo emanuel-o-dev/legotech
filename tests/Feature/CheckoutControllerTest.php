@@ -10,11 +10,11 @@ use Tests\TestCase;
 class CheckoutControllerTest extends TestCase
 {
     use RefreshDatabase;
-    
+
     protected function setUp(): void
     {
         parent::setUp();
-        $user = User::factory()->create();        
+        $user = User::factory()->create();
         $this->actingAs($user);
     }
 
