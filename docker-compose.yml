@@ -64,9 +64,9 @@ services:
       DB_CONNECTION: pgsql
       DB_HOST: db
       DB_PORT: 5432
-      DB_DATABASE: legotech_test
-      DB_USERNAME: ${DB_USERNAME}
-      DB_PASSWORD: ${DB_PASSWORD}
+      DB_DATABASE: ${DB_DATABASE_TEST}
+      DB_USERNAME: ${DB_USERNAME_TEST}
+      DB_PASSWORD: ${DB_PASSWORD_TEST}
 
 networks:
   app-network:
