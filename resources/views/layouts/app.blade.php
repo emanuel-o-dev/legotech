@@ -27,12 +27,22 @@
                 <a href="{{ route('products.index') }}" class="font-semibold hover:opacity-70">Produtos</a>
 
                 <!-- Carrinho -->
-                <a href="{{ route('cart.index') }}" class="relative text-xl hover:opacity-70">
-                    🛒
+                <a href="{{ route('cart.index') }}" class="relative">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-black" fill="none"
+                        viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M3 3h2l.4 2M7 13h8l4-8H5.4M7 13L5.4 5M7 13l-1.293 6.293A1 1 0 007 21h10a1 1 0 00.975-.783L20 13H7z" />
+                    </svg>
+
+                    @if (cartCount() > 0)
+                        <span class="badge badge-warning absolute -right-2 -top-2">
+                            {{ cartCount() }}
+                        </span>
+                    @endif
                 </a>
                 @if (auth()->check())
-                {{-- orders --}}
-                <a href="{{ route('user.orders') }}" class="font-semibold hover:opacity-70">Meus Pedidos</a>
+                    {{-- orders --}}
+                    <a href="{{ route('user.orders') }}" class="font-semibold hover:opacity-70">Meus Pedidos</a>
                 @endif
 
 
