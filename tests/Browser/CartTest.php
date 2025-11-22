@@ -10,6 +10,7 @@ use Tests\DuskTestCase;
 class CartTest extends DuskTestCase
 {
      use RefreshDatabase;
+
     /**
      * A Dusk test example.
      */
