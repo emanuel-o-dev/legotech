@@ -31,22 +31,35 @@
 
                             <form method="POST" action="{{ route('cart.decrease', $item['id']) }}">
                                 @csrf
-                                <button class="rounded bg-yellow-400 px-3 py-1 font-bold">-</button>
+                                <button dusk="decrease-{{ $item['id'] }}"
+                                    class="rounded bg-yellow-400 px-3 py-1 font-bold">-</button>
+
                             </form>
 
                             <form method="POST" action="{{ route('cart.add', $item['id']) }}">
                                 @csrf
-                                <button class="rounded bg-yellow-400 px-3 py-1 font-bold">+</button>
+                                <button dusk="increase-{{ $item['id'] }}"
+                                    class="rounded bg-yellow-400 px-3 py-1 font-bold">+</button>
                             </form>
 
                             <form method="POST" action="{{ route('cart.remove', $item['id']) }}">
                                 @csrf
                                 @method('DELETE')
+
+                                {{-- if to verify if is DUSK --}}
+                                @if (app()->environment('dusk'))
+                                <button dusk="remove-{{ $item['id'] }}"
+                                    class="rounded bg-blue-600 px-3 py-1 font-bold">
+                                    X
+                                </button>
+                                @else
                                 {{-- alert to confirm removal --}}
-                                <button onclick="return confirm('Tem certeza que deseja remover este item do carrinho?')"
+                                <button
+                                    onclick="return confirm('Tem certeza que deseja remover este item do carrinho?')"
                                     class="rounded bg-red-600 px-3 py-1 font-bold">
                                     X
                                 </button>
+                                @endif
                             </form>
 
                         </div>
