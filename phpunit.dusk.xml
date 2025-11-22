@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:noNamespaceSchemaLocation="./vendor/phpunit/phpunit/phpunit.xsd"
+         bootstrap="vendor/autoload.php"
+         colors="true">
+
+    <testsuites>
+        <testsuite name="Browser">
+            <directory suffix="Test.php">./tests/Browser</directory>
+        </testsuite>
+    </testsuites>
+
+    <php>
+        <env name="APP_ENV" value="dusk"/>
+        <env name="BCRYPT_ROUNDS" value="4"/>
+        <env name="CACHE_DRIVER" value="file"/>
+        <env name="SESSION_DRIVER" value="file"/>
+
+        <!-- Forces Dusk to use pgsql_test -->
+        <env name="DB_CONNECTION" value="pgsql_test"/>
+        <env name="DB_HOST" value="db"/>
+        <env name="DB_PORT" value="5432"/>
+        <env name="DB_DATABASE" value="legotech_test"/>
+        <env name="DB_USERNAME" value="legotech"/>
+        <env name="DB_PASSWORD" value="05092004"/>
+
+        <env name="DUSK_DRIVER_URL" value="http://selenium:4444/wd/hub"/>
+    </php>
+
+</phpunit>
