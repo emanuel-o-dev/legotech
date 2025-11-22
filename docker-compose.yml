@@ -40,7 +40,7 @@ services:
       - app-network
 
   selenium:
-    image: selenium/standalone-chrome-debug:latest
+    image: 'selenium/standalone-chrome'
     container_name: selenium
     ports:
       - 4444:4444
