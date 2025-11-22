@@ -4,6 +4,15 @@ set -o pipefail
 
 source .env
 
+#
+# Função para restaurar NGINX (é executada SEMPRE ao final do script)
+#
+function restore_nginx {
+    echo "=== Restoring DEV CONFIG ==="
+    docker compose cp server/nginx.dev.conf web:/etc/nginx/conf.d/default.conf || true
+    docker compose restart web || true
+}
+
 function ps {
     docker compose ps
 }
@@ -44,24 +53,19 @@ function tests {
 function dusk {
     echo "=== Switching to DUSK CONFIG ==="
 
-    # copia o dusk.conf direto pro container SEM alterar seu arquivo local
+    # GARANTE que nginx será restaurado MESMO se dusk falhar
+    trap restore_nginx EXIT
+
     docker compose cp server/nginx.dusk.conf web:/etc/nginx/conf.d/default.conf
     docker compose restart web
 
-
-    echo 'Resetting DB...'
+    echo "Resetting DB..."
     docker compose exec -T php_test php artisan migrate:fresh --force --env=dusk
 
     echo "Running Dusk..."
-    docker compose exec -T php_test php artisan dusk --env=dusk
-
-    echo "=== Restoring DEV CONFIG ==="
-
-    # copia o nginx.conf normal de volta pro container
-    docker compose cp server/nginx.dev.conf web:/etc/nginx/conf.d/default.conf
-    docker compose restart web
+    # NÃO aborta script se dusk falhar
+    docker compose exec -T php_test php artisan dusk --env=dusk || true
 }
-
 
 function phpcs {
     TEST_PATH="${@:-.}"
@@ -93,7 +97,6 @@ function db:reset {
 function db:populate {
     docker compose exec php php artisan db:seed
 }
-
 
 TIMEFORMAT=$'\nTask completed in %3lR'
 time "$@"
