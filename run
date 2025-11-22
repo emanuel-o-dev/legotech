@@ -42,9 +42,12 @@ function tests {
 }
 
 function dusk {
-    echo "=== Switching NGINX to DUSK CONFIG ==="
-    docker compose exec web sh -c "echo 'include /etc/nginx/conf.d/nginx.dusk.conf;' > /etc/nginx/conf.d/default.conf"
-    docker compose exec web nginx -s reload
+    echo "=== Switching to DUSK CONFIG ==="
+
+    # copia o dusk.conf direto pro container SEM alterar seu arquivo local
+    docker compose cp server/nginx.dusk.conf web:/etc/nginx/conf.d/default.conf
+    docker compose restart web
+
 
     echo 'Resetting DB...'
     docker compose exec -T php_test php artisan migrate:fresh --force --env=dusk
@@ -52,11 +55,12 @@ function dusk {
     echo "Running Dusk..."
     docker compose exec -T php_test php artisan dusk --env=dusk
 
-    echo "=== Restoring normal NGINX config ==="
-    docker compose exec web sh -c "echo 'include /etc/nginx/conf.d/nginx.dev.conf;' > /etc/nginx/conf.d/default.conf"
-    docker compose exec web nginx -s reload
-}
+    echo "=== Restoring DEV CONFIG ==="
 
+    # copia o nginx.conf normal de volta pro container
+    docker compose cp server/nginx.dev.conf web:/etc/nginx/conf.d/default.conf
+    docker compose restart web
+}
 
 
 function phpcs {

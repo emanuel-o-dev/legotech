@@ -4,8 +4,10 @@ services:
     working_dir: /var/www
     volumes:
       - .:/var/www
-      - ./server/nginx.conf:/etc/nginx/conf.d/nginx.dev.conf
-      - ./server/nginx.dusk.conf:/etc/nginx/conf.d/nginx.dusk.conf
+      - ./server:/etc/nginx/conf.d
+
+
+
     ports:
       - 80:80
       - 8080:8080
