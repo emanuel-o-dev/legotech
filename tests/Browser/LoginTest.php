@@ -3,19 +3,16 @@
 namespace Tests\Browser;
 
 use App\Models\User;
-use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Dusk\Browser;
 use Tests\DuskTestCase;
 
 class LoginTest extends DuskTestCase
 {
-    /**
-     * A basic browser test example.
-     */
     public function test_basic_example(): void
     {
         $user = User::factory()->create([
-            'password' => 'password',
+            'password' => bcrypt('password'),
         ]);
 
         $this->browse(function (Browser $browser) use ($user) {
