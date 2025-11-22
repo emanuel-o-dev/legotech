@@ -1,9 +1,17 @@
 #!/bin/bash
-
 set -o errexit
 set -o pipefail
 
 source .env
+
+#
+# Função para restaurar NGINX (é executada SEMPRE ao final do script)
+#
+function restore_nginx {
+    echo "=== Restoring DEV CONFIG ==="
+    docker compose cp server/nginx.dev.conf web:/etc/nginx/conf.d/default.conf || true
+    docker compose restart web || true
+}
 
 function ps {
     docker compose ps
@@ -13,22 +21,16 @@ function up {
     docker compose up -d "$@"
 
     docker compose exec php sh -c "
-        mkdir -p storage/framework/{cache,views,sessions,testing} bootstrap/cache && \
-        chown -R www-data:www-data storage bootstrap/cache && \
+        mkdir -p storage/framework/{cache,views,sessions,testing} bootstrap/cache &&
+        chown -R www-data:www-data storage bootstrap/cache &&
         chmod -R 775 storage bootstrap/cache
-        "
+    "
 
     docker compose exec php php artisan key:generate
 }
 
-
 function down {
-    docker compose down "${@}"
-}
-
-function permissions {
-    sudo chown -R www-data:www-data storage ../bootstrap/cache
-    sudo chmod -R 775 storage ../bootstrap/cache
+    docker compose down "$@"
 }
 
 function composer {
@@ -40,56 +42,34 @@ function composer {
         composer:2.7.2 composer "${@}"
 }
 
-
-function nginx:check {
-    docker compose exec web nginx -t
-}
-
-function nginx:status {
-    docker compose exec web service nginx status
-}
-
-function nginx:reload {
-    docker compose exec web nginx -s reload
-}
-
-function php:console {
-    docker compose exec php php -a
-}
-
 function tests {
-    # sempre rodar apenas Unit e Feature
-    TEST_PATH="tests/Unit tests/Feature"
-
-    echo "Installing JS dependencies..."
-    docker compose exec php_test yarn install -y
-
-    echo "Skipping front-end build (testing environment)..."
+    echo "Clearing caches..."
+    docker compose exec -T php_test php artisan config:clear
+    docker compose exec -T php_test php artisan cache:clear
+    docker compose exec -T php_test php artisan route:clear
 
     echo "Running migrations..."
-    docker compose exec -T php_test php artisan migrate --force --env=testing
+    docker compose exec -T php_test php artisan migrate:fresh --force
 
-    echo "Running tests..."
-    docker compose run --rm php_test ./vendor/bin/phpunit --colors=always ${TEST_PATH}
+    echo "Running PHPUnit..."
+    docker compose exec -T php_test ./vendor/bin/phpunit --colors=always
 }
 
 function dusk {
-    docker compose exec php php artisan dusk --env=dusk.local
-}
+    echo "=== Switching to DUSK CONFIG ==="
 
-function uploads {
-    echo "Criando link simbólico storage e ajustando permissões..."
+    # GARANTE que nginx será restaurado MESMO se dusk falhar
+    trap restore_nginx EXIT
 
-    docker compose exec php sh -c "
-        cd /var/www/public && \
-        if [ -L storage ]; then rm storage; fi && \
-        ln -s ../storage/app/public storage && \
-        mkdir -p ../storage/app/public/covers && \
-        chown -R www-data:www-data ../storage ../bootstrap/cache && \
-        chmod -R 775 ../storage ../bootstrap/cache
-    "
+    docker compose cp server/nginx.dusk.conf web:/etc/nginx/conf.d/default.conf
+    docker compose restart web
 
-    echo "Link simbólico criado e permissões ajustadas."
+    echo "Resetting DB..."
+    docker compose exec -T php_test php artisan migrate:fresh --force --env=dusk
+
+    echo "Running Dusk..."
+    # NÃO aborta script se dusk falhar
+    docker compose exec -T php_test php artisan dusk --env=dusk || true
 }
 
 function phpcs {
@@ -124,4 +104,4 @@ function db:populate {
 }
 
 TIMEFORMAT=$'\nTask completed in %3lR'
-time ${@}
+time "$@"

@@ -26,7 +26,7 @@ class AuthController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
 
-            return redirect()->intended('/')
+            return redirect()->route('products.index')
                 ->with('success', 'Login realizado com sucesso!');
         }
 
@@ -43,6 +43,6 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/products')->with('error', 'Você saiu da conta.');
+        return redirect()->route('products.index')->with('error', 'Você saiu da conta.');
     }
 }

@@ -16,8 +16,11 @@ RUN ln -fs /usr/share/zoneinfo/America/Sao_Paulo /etc/localtime \
     && dpkg-reconfigure -f noninteractive tzdata \
     && echo "date.timezone=America/Sao_Paulo" > /usr/local/etc/php/conf.d/timezone.ini
 
-# Instala Node.js (versão LTS) e Yarn
+# Instala Node + Yarn de forma 100% não interativa e estável
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
-    && corepack enable \
-    && corepack prepare yarn@stable --activate
+    && npm install --global yarn
+
+# Impedir Yarn/Corepack de pedir confirmação em ambiente não interativo
+ENV COREPACK_ENABLE_STRICT=0
+ENV YARN_ENABLE_UPGRADE_CHECK=0
