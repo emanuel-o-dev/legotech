@@ -34,7 +34,12 @@ function down {
 }
 
 function composer {
-    docker compose run --rm php composer "$@"
+    docker run --rm -i \
+        -e COMPOSER_CACHE_DIR="/app/.cache/composer" \
+        -u 0:0 \
+        -v "$(pwd):/app" \
+        -w /app \
+        composer:2.7.2 composer "${@}"
 }
 
 function tests {
