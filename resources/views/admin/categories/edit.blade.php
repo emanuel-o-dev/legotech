@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-xl mx-auto mt-10">
+    <a href="{{ route('admin.categories.index') }}" class="text-yellow-400 font-bold hover:underline mb-4 inline-block">Voltar</a>
 
     <h1 class="text-3xl font-bold text-yellow-400 mb-6">Editar Categoria</h1>
 

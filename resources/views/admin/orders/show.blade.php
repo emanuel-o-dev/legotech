@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto mt-10 text-white">
+    <a href="{{ route('admin.orders.index') }}" class="text-yellow-400 font-bold hover:underline mb-4 inline-block">Voltar</a>
 
     <h1 class="text-3xl font-bold text-yellow-400 mb-6">
         Pedido #{{ $order->id }}

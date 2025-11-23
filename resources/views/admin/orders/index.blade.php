@@ -4,6 +4,8 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto mt-10">
+    <a href="{{ route('admin.dashboard') }}" class="text-yellow-400 font-bold hover:underline mb-4 inline-block">Voltar</a>
+
     <h1 class="text-3xl font-bold text-yellow-400 mb-6">Pedidos</h1>
 
     <div class="bg-[#0b1d3a] p-6 rounded-lg shadow text-white">
