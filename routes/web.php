@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
@@ -8,6 +9,7 @@ use App\Http\Controllers\UserOrderController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\RoleController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -47,6 +49,15 @@ Route::middleware(['auth'])
     ->get('/me/orders/{order}', [UserOrderController::class, 'show'])
     ->name('user.orders.show');
 
+/*|--------------------------------------------------------------------------
+| Rotas de Troca de Papel (Role)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth'])->group(function () {
+    Route::post('/toggle-role/{user}', [RoleController::class, 'toggle'])
+        ->name('toggle.role');
+});
+
 /*
 |--------------------------------------------------------------------------
 | Login e Logout
@@ -66,10 +77,12 @@ Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 | Rotas Admin
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth', 'can:isAdmin'])
+
+Route::middleware(['auth', 'admin'])
     ->prefix('admin')
     ->name('admin.')
     ->group(function () {
+        Route::get('/', [AdminController::class, 'dashboard'])->name('dashboard');
 
         Route::resource('categories', AdminCategoryController::class);
         Route::resource('products', AdminProductController::class);
@@ -78,11 +91,12 @@ Route::middleware(['auth', 'can:isAdmin'])
         Route::get('orders/{order}', [AdminOrderController::class, 'show'])->name('orders.show');
     });
 
+
 // Fallback dinâmico
 Route::fallback(function () {
     if (Auth::check()) {
         // Usuário logado: exibe 404 interna ou redireciona pro dashboard
-        return response()->view('errors.authenticated', [
+        return response()->view('errors.generic', [
             'code' => 404,
             'message' => 'Página não encontrada dentro do sistema.'
         ], 404);

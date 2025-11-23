@@ -13,7 +13,7 @@ class ProductFactory extends Factory
     public function definition(): array
     {
         return [
-            'category_id' => Category::inRandomOrder()->first()?->id ?? Category::factory(),
+            'category_id' => Category::query()->inRandomOrder()->value('id') ?? Category::factory(),
             'name'        => $this->faker->words(3, true),
             'price'       => $this->faker->randomFloat(2, 29.90, 999.90),
             'description' => $this->faker->paragraph(),

@@ -46,7 +46,7 @@
                 @endif
 
 
-                <!-- Login / Dashboard -->
+                <!-- Login -->
                 @if (auth()->check())
                     <form method="POST" action="{{ route('logout') }}" class="inline">
                         @csrf
@@ -55,7 +55,22 @@
                 @else
                     <a href="{{ route('login') }}" class="font-bold text-black">Login</a>
                 @endif
+                {{-- Link para Admin --}}
+                @auth
+                    @if (auth()->user()->isAdmin())
+                        <a href="{{ route('admin.dashboard') }}" class="text-black font-bold">
+                            Painel Admin
+                        </a>
+                    @endif
 
+                    
+                    <form method="POST" action="{{ route('toggle.role', auth()->user()) }}" class="inline">
+                        @csrf
+                        <button type="submit" class="rounded  px-2 py-1 text-sm text-black font-bold">
+                            Mudar ROLE (Atual: {{ auth()->user()->role }})
+                        </button>
+                    </form>
+                @endauth
             </div>
         </div>
     </header>

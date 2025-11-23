@@ -4,6 +4,7 @@
 
 @section('content')
 <div class="max-w-4xl mx-auto mt-10">
+    <a href="{{ route('admin.dashboard') }}" class="text-yellow-400 font-bold hover:underline mb-4 inline-block">Voltar</a>
 
     <div class="flex justify-between items-center mb-6">
         <h1 class="text-3xl font-bold text-yellow-400">Categorias</h1>
