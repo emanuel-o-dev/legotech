@@ -26,14 +26,14 @@
             <div class="mb-4">
                 <label class="block text-yellow-400 font-bold mb-1">Nome</label>
                 <input type="text" name="name"
-                       class="w-full px-3 py-2 rounded text-black"
+                       class="w-full px-3 py-2 rounded text-white"
                        placeholder="Ex: Star Wars">
             </div>
 
             <div class="mb-4">
                 <label class="block text-yellow-400 font-bold mb-1">Slug</label>
                 <input type="text" name="slug"
-                       class="w-full px-3 py-2 rounded text-black"
+                       class="w-full px-3 py-2 rounded text-white"
                        placeholder="ex: star-wars">
             </div>
 
