@@ -16,7 +16,7 @@ class OrderFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'total'   => 0, // será atualizado depois
+            'total' => 0,
         ];
     }
 
@@ -24,14 +24,12 @@ class OrderFactory extends Factory
     {
         return $this->afterCreating(function (Order $order) {
 
-            // Criar entre 1 e 3 itens
-            $items = Product::inRandomOrder()
-                ->take(rand(1, 3))
-                ->get();
+            // cria entre 1 e 3 produtos (com category já automática via ProductFactory)
+            $products = Product::factory()->count(rand(1, 3))->create();
 
             $total = 0;
 
-            foreach ($items as $product) {
+            foreach ($products as $product) {
 
                 $quantity = rand(1, 3);
                 $subtotal = $product->price * $quantity;
@@ -46,7 +44,6 @@ class OrderFactory extends Factory
                 $total += $subtotal;
             }
 
-            // Atualiza total correto
             $order->update(['total' => $total]);
         });
     }
