@@ -24,7 +24,7 @@ class ProductFactory extends Factory
                 'Inclui mini figuras',
                 'Compatível com Lego clássico'
             ], rand(1, 4)),
-            'image_path'  => 'products/default.jpg',
+            'image_path'  => 'default.jpg',
         ];
     }
 }
